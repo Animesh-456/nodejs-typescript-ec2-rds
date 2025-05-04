@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "removeComments": true, // Removes comments from the compiled code
+    "strict": true, // Enables strict type-checking options
+    "noImplicitAny": true, // Ensures all variables have explicit types
+    "skipLibCheck": true // Skips type checking of declaration files for faster builds
+  },
+  "lib": [
+    "es2015"
+  ]
+}
