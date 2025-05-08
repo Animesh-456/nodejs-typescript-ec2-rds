@@ -1,0 +1,79 @@
+name: Nodejs-typescript CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    types:
+      - closed
+    branches: [master]
+
+jobs:
+  build:
+    name: Build Nodejs App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: nodejs-build
+          path: dist/
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: nodejs-build
+          path: dist/
+
+      - name: Run tests
+        run: npm test -- --watchAll=false
+
+  # deploy:
+  #   name: Deploy to Production
+  #   runs-on: ubuntu-latest
+  #   needs: test
+
+  #   steps:
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: nodejs-build
+  #         path: build/
+
+  #     - name: Deploy to Server
+  #       run: |
+  #         echo "Deploying to production server..."
+  #         # Example: Copy build files to the server using scp
+  #         # scp -r build/ user@yourserver.com:/var/www/html/
