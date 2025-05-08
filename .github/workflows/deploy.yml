@@ -37,7 +37,7 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-    # needs: build
+    needs: build
 
     steps:
       - name: Checkout code
@@ -51,11 +51,11 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      # - name: Download build artifacts
-      #   uses: actions/download-artifact@v3.1.3
-      #   with:
-      #     name: nodejs-build
-      #     path: dist/
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: nodejs-build
+          path: dist/
 
       - name: Run tests
         run: npm test -- --watchAll=false
