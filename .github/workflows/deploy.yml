@@ -80,15 +80,15 @@ jobs:
             # Fetch the latest changes from the repository
             git pull origin master
 
-            rm -fr dist/*
-            rm -fr node_modules/*
+            rm -rf dist/*
+            rm -rf node_modules/*
             
 
             # Copy the build directory to the server
-            rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/dist/
 
             # Sync the node_modules directory
-            rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/node_modules/
 
             # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
