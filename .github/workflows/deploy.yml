@@ -20,10 +20,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
-        run: npm i
+        run: npm install
 
       - name: Build application
         run: npm run build
@@ -33,6 +33,12 @@ jobs:
         with:
           name: nodejs-build
           path: dist/
+
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-modules
+          path: node_modules/
 
   test:
     name: Run Tests
@@ -46,10 +52,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
-        run: npm i
+        run: npm install
 
       - name: Run tests
         run: npm test -- --watchAll=false
@@ -66,27 +72,29 @@ jobs:
           name: nodejs-build
           path: dist/
 
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node-modules
+          path: node_modules/
+
+      - name: Upload dist and node_modules to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "dist/*,node_modules/*"
+          target: "/home/ubuntu/sites/nodejs-typescript-ec2-rds/"
+
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist/ node_modules/"
-          target: "/home/ubuntu/sites/nodejs-typescript-ec2-rds/"
           script: |
-            # Navigate to the project directory on the server
             cd /home/ubuntu/sites/nodejs-typescript-ec2-rds/
-
-
-            # Fetch the latest changes from the repository
-            git pull origin master
-
-            # # Copy the build directory to the server
-            # rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
-            # rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
-
-            # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
             source $NVM_DIR/nvm.sh
             pm2 restart all
