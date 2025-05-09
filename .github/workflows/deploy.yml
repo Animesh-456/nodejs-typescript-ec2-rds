@@ -77,10 +77,14 @@ jobs:
             cd /home/ubuntu/sites
 
 
-            # Pull the latest changes from the Git repository
-            git pull origin master
-
+            if [ ! -d "nodejs-typescript-ec2-rds" ]; then
+            # If the directory doesn't exist, clone the repository
+            git clone https://github.com/Animesh-456/nodejs-typescript-ec2-rds.git
+            else
+            # If the directory exists, navigate into it and pull the latest changes
             cd nodejs-typescript-ec2-rds
+            git pull origin master
+            fi
 
             # Copy the build directory to the server
             rsync -avz --delete dist/ /home/ubuntu/sites/dist/
