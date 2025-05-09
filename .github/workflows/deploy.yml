@@ -87,10 +87,10 @@ jobs:
             fi
 
             # Copy the build directory to the server
-            rsync -avz --delete dist/ /home/ubuntu/sites/dist/
+            rsync -avz --delete dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
 
             # Sync the node_modules directory
-            rsync -avz --delete node_modules/ /home/ubuntu/sites/node_modules/
+            rsync -avz --delete node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
 
             # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
