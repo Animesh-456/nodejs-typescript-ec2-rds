@@ -51,29 +51,44 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      - name: Run tests
+        run: npm test -- --watchAll=false
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test, build]
+
+    steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: nodejs-build
-          path: dist/
+          path: build/
 
-      - name: Run tests
-        run: npm test -- --watchAll=false
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Navigate to the project directory on the server
+            cd /home/ubuntu/sites
 
-  # deploy:
-  #   name: Deploy to Production
-  #   runs-on: ubuntu-latest
-  #   needs: test
 
-  #   steps:
-  #     - name: Download build artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: nodejs-build
-  #         path: build/
+            # Pull the latest changes from the Git repository
+            git pull origin master
 
-  #     - name: Deploy to Server
-  #       run: |
-  #         echo "Deploying to production server..."
-  #         # Example: Copy build files to the server using scp
-  #         # scp -r build/ user@yourserver.com:/var/www/html/
+            cd nodejs-typescript-ec2-rds
+
+            # Copy the build directory to the server
+            rsync -avz --delete dist/ /home/ubuntu/sites/dist/
+
+            # Sync the node_modules directory
+            rsync -avz --delete node_modules/ /home/ubuntu/sites/node_modules/
+
+            # Restart the application (using PM2)
+            export NVM_DIR=~/.nvm
+            source $NVM_DIR/nvm.sh
+            pm2 restart all
