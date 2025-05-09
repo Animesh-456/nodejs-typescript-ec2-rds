@@ -17,6 +17,12 @@ describe('User Service', () => {
     expect(users).toEqual([{ id: 1, name: 'Test', email: 'test@example.com' }]);
   });
 
+
+  it('should fetch a user by email', async () => {
+    const user = await userService.getUserByEmail('test@example.com');
+    expect(user).toEqual([{ id: 1, name: 'Test', email: 'test@example.com' }]);
+  });
+
   it('should insert a user', async () => {
     await expect(userService.createUser('John', 'john@example.com')).resolves.toBeUndefined();
   });
