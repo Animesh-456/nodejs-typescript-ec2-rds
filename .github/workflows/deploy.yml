@@ -81,8 +81,8 @@ jobs:
             git pull origin master
 
             # Copy the build directory to the server
-            rsync -avz --delete dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
-            rsync -avz --delete node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
 
             # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
