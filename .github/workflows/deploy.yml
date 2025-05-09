@@ -88,8 +88,8 @@ jobs:
             mkdir -p /home/ubuntu/sites/nodejs-typescript-ec2-rds/node_modules/
 
             # Copy the build directory to the server
-            rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/dist/
-            rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/dist/node_modules/
+            cp dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            cp node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
 
             # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
