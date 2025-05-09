@@ -64,7 +64,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nodejs-build
-          path: build/
+          path: dist/
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1
@@ -80,16 +80,9 @@ jobs:
             # Fetch the latest changes from the repository
             git pull origin master
 
-            rm -rf dist/
-            rm -rf node_modules/
-
-            # Ensure destination directories exist
-            mkdir -p /home/ubuntu/sites/nodejs-typescript-ec2-rds/dist/
-            mkdir -p /home/ubuntu/sites/nodejs-typescript-ec2-rds/node_modules/
-
             # Copy the build directory to the server
-            cp dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
-            cp node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            rsync -avz --delete dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            rsync -avz --delete node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
 
             # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
