@@ -72,6 +72,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "dist/ node_modules/"
+          target: "/home/ubuntu/sites/nodejs-typescript-ec2-rds/"
           script: |
             # Navigate to the project directory on the server
             cd /home/ubuntu/sites/nodejs-typescript-ec2-rds/
@@ -80,9 +82,9 @@ jobs:
             # Fetch the latest changes from the repository
             git pull origin master
 
-            # Copy the build directory to the server
-            rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
-            rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            # # Copy the build directory to the server
+            # rsync -avz dist/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
+            # rsync -avz node_modules/ /home/ubuntu/sites/nodejs-typescript-ec2-rds/
 
             # Restart the application (using PM2)
             export NVM_DIR=~/.nvm
